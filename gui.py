@@ -5,6 +5,7 @@ import sys
 ATTACK_MESSAGE = "WHY CHOOSE VIOLENCE?!?"
 COLLISION_MESSAGE = "Oh no, you can't move through walls, unless you're a ghost."
 EXIT_MESSAGE = "Bye bye, hope you had a nice time in the sex dungeon!"
+NO_ONE_TO_PLAY_MESSAGE = "Well you don't have a character yet, do you?!"
 MENU_TEXT = """Controls:
 'w' - move up
 's' - move down
@@ -41,6 +42,6 @@ class Gui:
     def message(self, message):
         self._message = message
     
-    def exit(self):
-        print(EXIT_MESSAGE)
+    def exit(self, message=EXIT_MESSAGE):
+        print(message)
         sys.exit(0)

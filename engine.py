@@ -3,7 +3,7 @@ from pynput import keyboard
 import gui
 import entities
 
-from utils import CollisionError, VectorPosition
+from utils import CollisionError, NoOneToPlayError, VectorPosition
 
 
 MAP_FILE_PATH = "resources/map_2_v2"
@@ -35,7 +35,10 @@ class Map:
     def __init__(self, map_file_path):
         with open(map_file_path) as map_file:
             self._blank_map = _TupleIndexedMatrix(list(row) for row in map_file.readlines())
-        self.character = entities.Character(self.CHARACTER_INIT_POSITION)
+        try:
+            self.character = entities.Character(self.CHARACTER_INIT_POSITION)
+        except (AttributeError, NameError, TypeError):
+            raise NoOneToPlayError
         self.update()
 
     def __str__(self):
@@ -59,8 +62,11 @@ class Engine:
                         'd': VectorPosition((0, 1))}
     
     def __init__(self, enable_pynput):
-        self.map = Map(MAP_FILE_PATH)
         self.gui = gui.Gui()
+        try:
+            self.map = Map(MAP_FILE_PATH)
+        except NoOneToPlayError:
+            self.gui.exit(gui.NO_ONE_TO_PLAY_MESSAGE)
         self._enable_pynput = enable_pynput
         self.ACTION_CALLBACKS = {'x': self.handle_attack,
                                  'c': self.handle_spellcasting,
