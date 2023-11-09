@@ -3,7 +3,7 @@ from pynput import keyboard
 import gui
 import entities
 
-from utils import VectorPosition
+from utils import CollisionError, VectorPosition
 
 
 MAP_FILE_PATH = "resources/map_2_v2"
@@ -70,7 +70,7 @@ class Engine:
 
     def handle_collision(self, movement_vector):
         if self.map[movement_vector + self.map.character.position] in self.map.WALLS:
-            raise IndexError
+            raise CollisionError
 
     def parse_input(self):
         if self._enable_pynput:
@@ -82,10 +82,14 @@ class Engine:
         if key_pressed in self.MOVEMENT_VECTORS:
             try:
                 self.handle_collision(self.MOVEMENT_VECTORS[key_pressed])
-            except IndexError:
+            except CollisionError:
                 self.gui.message(gui.COLLISION_MESSAGE)
             else:
-                self.map.character.move(self.MOVEMENT_VECTORS[key_pressed])
+                # Handle missing implementations
+                try:
+                    self.map.character.move(self.MOVEMENT_VECTORS[key_pressed])
+                except (AttributeError, NotImplementedError):
+                    self.gui.message(gui.MOVE_MESSAGE)
 
     def _parse_normal_input(self):
         return input()
@@ -102,5 +106,5 @@ class Engine:
         return key_pressed.char
 
 
-engine = Engine(enable_pynput=True)
+engine = Engine(enable_pynput=False)
 engine.mainloop()

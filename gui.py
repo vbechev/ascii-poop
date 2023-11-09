@@ -11,9 +11,11 @@ MENU_TEXT = """Controls:
 'd' - move right
 'x' - attack
 'c' - cast spell
+'q' - GTFO
 
 What do you want to do:
 """
+MOVE_MESSAGE = "Oh no, it seems you haven't learned how to move!"
 
 
 class Gui:
