@@ -50,7 +50,7 @@ class Map:
 
 
 class Engine:
-    """Engine that runs and parses all the inputs."""
+    """Engine that runs the game and parses all the inputs."""
 
     MOVEMENT_VECTORS = {'w': VectorPosition((-1, 0)),
                         's': VectorPosition((1, 0)),
@@ -77,6 +77,8 @@ class Engine:
             key_pressed = self._parse_pynput()
         else:
             key_pressed = self._parse_normal_input()
+        if key_pressed == 'q':
+            self.gui.exit()
         if key_pressed in self.MOVEMENT_VECTORS:
             try:
                 self.handle_collision(self.MOVEMENT_VECTORS[key_pressed])
