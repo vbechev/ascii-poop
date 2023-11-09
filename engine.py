@@ -45,6 +45,7 @@ class Map:
         return self._map[index]
     
     def update(self):
+        """Reset the map to it's default state and redraw the moveable objects."""
         self._map = self._blank_map.deepcopy()
         self._map[self.character.position] = self.character.ICON
 
@@ -69,10 +70,25 @@ class Engine:
             self.map.update()
 
     def handle_collision(self, movement_vector):
+        """Raise a CollisionError when there are colliding objects."""
         if self.map[movement_vector + self.map.character.position] in self.map.WALLS:
             raise CollisionError
+    
+    def handle_movement(self, key_pressed):
+        """Trigger a move of the player object depending on the chosen direction."""
+        try:
+            self.handle_collision(self.MOVEMENT_VECTORS[key_pressed])
+        except CollisionError:
+            self.gui.message(gui.COLLISION_MESSAGE)
+        else:
+            # Handle missing implementation
+            try:
+                self.map.character.move(self.MOVEMENT_VECTORS[key_pressed])
+            except (AttributeError, NotImplementedError):
+                self.gui.message(gui.MOVE_MESSAGE)
 
     def parse_input(self):
+        """Parse the keyboard input with either pynput (dynamic) or from standard input."""
         if self._enable_pynput:
             key_pressed = self._parse_pynput()
         else:
@@ -80,16 +96,7 @@ class Engine:
         if key_pressed == 'q':
             self.gui.exit()
         if key_pressed in self.MOVEMENT_VECTORS:
-            try:
-                self.handle_collision(self.MOVEMENT_VECTORS[key_pressed])
-            except CollisionError:
-                self.gui.message(gui.COLLISION_MESSAGE)
-            else:
-                # Handle missing implementations
-                try:
-                    self.map.character.move(self.MOVEMENT_VECTORS[key_pressed])
-                except (AttributeError, NotImplementedError):
-                    self.gui.message(gui.MOVE_MESSAGE)
+            self.handle_movement(key_pressed)
 
     def _parse_normal_input(self):
         return input()
