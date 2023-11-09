@@ -62,17 +62,31 @@ class Engine:
         self.map = Map(MAP_FILE_PATH)
         self.gui = gui.Gui()
         self._enable_pynput = enable_pynput
+        self.ACTION_CALLBACKS = {'x': self.handle_attack,
+                                 'c': self.handle_spellcasting,
+                                 'q': self.handle_exit}
 
     def mainloop(self):
         while True:
             self.gui.draw_screen(self.map)
             self.parse_input()
             self.map.update()
+    
+    def handle_attack(self):
+        """Trigger an attack of the player object."""
+        # Handle missing implementation
+        try:
+            self.map.character.attack()
+        except (AttributeError, NotImplementedError):
+            self.gui.message(gui.ATTACK_MESSAGE)
 
     def handle_collision(self, movement_vector):
         """Raise a CollisionError when there are colliding objects."""
         if self.map[movement_vector + self.map.character.position] in self.map.WALLS:
             raise CollisionError
+    
+    def handle_exit(self):
+        self.gui.exit()
     
     def handle_movement(self, key_pressed):
         """Trigger a move of the player object depending on the chosen direction."""
@@ -86,6 +100,14 @@ class Engine:
                 self.map.character.move(self.MOVEMENT_VECTORS[key_pressed])
             except (AttributeError, NotImplementedError):
                 self.gui.message(gui.MOVE_MESSAGE)
+    
+    def handle_spellcasting(self):
+        """Trigger a move of the player object depending on the chosen direction."""
+        # Handle missing implementation
+        try:
+            self.map.character.cast_spell()
+        except (AttributeError, NotImplementedError):
+            self.gui.message(gui.SPELLCASTING_MESSAGE)
 
     def parse_input(self):
         """Parse the keyboard input with either pynput (dynamic) or from standard input."""
@@ -93,10 +115,12 @@ class Engine:
             key_pressed = self._parse_pynput()
         else:
             key_pressed = self._parse_normal_input()
-        if key_pressed == 'q':
-            self.gui.exit()
         if key_pressed in self.MOVEMENT_VECTORS:
             self.handle_movement(key_pressed)
+        # Why check - because we don't want to crash when pressing a key
+        # for which an action is not defined yet. It's too much hassle.
+        if key_pressed in self.ACTION_CALLBACKS:
+            self.ACTION_CALLBACKS[key_pressed]()
 
     def _parse_normal_input(self):
         return input()
@@ -113,5 +137,5 @@ class Engine:
         return key_pressed.char
 
 
-engine = Engine(enable_pynput=False)
+engine = Engine(enable_pynput=True)
 engine.mainloop()

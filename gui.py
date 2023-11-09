@@ -2,6 +2,7 @@ import os
 import sys
 
 
+ATTACK_MESSAGE = "WHY CHOOSE VIOLENCE?!?"
 COLLISION_MESSAGE = "Oh no, you can't move through walls, unless you're a ghost."
 EXIT_MESSAGE = "Bye bye, hope you had a nice time in the sex dungeon!"
 MENU_TEXT = """Controls:
@@ -16,6 +17,7 @@ MENU_TEXT = """Controls:
 What do you want to do:
 """
 MOVE_MESSAGE = "Oh no, it seems you haven't learned how to move!"
+SPELLCASTING_MESSAGE = "Abracadabra. Nothing happens."
 
 
 class Gui:
