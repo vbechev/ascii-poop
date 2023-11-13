@@ -96,7 +96,6 @@ class Engine:
         target = min(self.map.enemies,
                      key = lambda enemy: dist(self.map.character.position,
                                               enemy.position))
-        print(target)
         # Handle missing implementation
         try:
             success, roll, damage = self.map.character.attack(target)
@@ -113,8 +112,11 @@ class Engine:
 
     def handle_collision(self, movement_vector):
         """Raise a CollisionError when there are colliding objects."""
-        if self.map[movement_vector + self.map.character.position] in self.map.WALLS:
-            raise CollisionError
+        new_position = movement_vector + self.map.character.position
+        if self.map[new_position] in self.map.WALLS:
+            raise CollisionError(gui.WALL_COLLISION_MESSAGE)
+        if new_position in [enemy.position for enemy in self.map.enemies]:
+            raise CollisionError(gui.ENEMY_COLLISION_MESSAGE)
     
     def handle_exit(self):
         self.gui.exit()
@@ -123,8 +125,8 @@ class Engine:
         """Trigger a move of the player object depending on the chosen direction."""
         try:
             self.handle_collision(self.MOVEMENT_VECTORS[key_pressed])
-        except CollisionError:
-            self.gui.add_message(gui.COLLISION_MESSAGE)
+        except CollisionError as err:
+            self.gui.add_message(str(err))
         else:
             # Handle missing implementation
             try:

@@ -2,6 +2,7 @@ import os
 import sys
 
 
+# Attack summary messages
 # Attack messaging can be better done in another way, but this will have to do
 ATTACK_COMMON = "{attacker} attempted to hit {target} with a roll of {roll}.\n"
 ATTACK_FAILURE = ATTACK_COMMON + "The attack does not hit {target}."
@@ -12,7 +13,12 @@ ATTACK_SUCCESS = (ATTACK_COMMON +
                   "{target} has {health_left} health remaining.")
 ATTACK_SUCCESS_TYPE_ERROR = ("Expected 'attacker', 'target', "
                              "and 'roll' in **kwargs.")
-COLLISION_MESSAGE = "Oh no, you can't move through walls, unless you're a ghost."
+
+# Collision messages
+ENEMY_COLLISION_MESSAGE = "Wow, why don't you try buying him/her a dinner first?"
+WALL_COLLISION_MESSAGE = "Oh no, you can't move through walls, unless you're a ghost."
+
+# Misc messages
 EXIT_MESSAGE = "Bye bye, hope you had a nice time in the sex dungeon!"
 MENU_TEXT = """Controls:
 'w' - move up
