@@ -1,5 +1,7 @@
 from random import randint
 
+from utils import UnaliveException
+
 
 D20 = 20
 
@@ -10,8 +12,7 @@ class Entity:
     BASE_AC = 10
 
     # TODO - More state - dead/alive, etc., spells, some stuff for testing
-    def __init__(self, name, level, health,
-                 position, fav_position):
+    def __init__(self, name, level, health, position, fav_position):
         self.name = name
         self._level = level
         self.health = health
@@ -19,7 +20,15 @@ class Entity:
         self.__fav_position = fav_position
         self.ac = self.BASE_AC + level
 
+    @property
+    def alive(self):
+        """Return if the entity is alive or not."""
+        return self.health > 0
+
     def attack(self, target):
+        if not self.alive:
+            raise UnaliveException
+
         roll = randint(1, D20) + self._level
         if success := roll >= target.ac:
             damage = sum(randint(1, self.BASE_HIT_DIE)
@@ -45,6 +54,3 @@ class Character(Entity):
 class Enemy(Entity):
 
     ICON = '¼'
-
-c = Character('Gosho', 5, 100, (10, 10), 'Лешояд')
-e = Enemy('Murshata', 10, 200, (10, 9), 'Не е лешояд')
