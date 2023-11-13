@@ -34,6 +34,7 @@ class Map:
     EMPTY = ' '
 
     def __init__(self, map_file_path, level_config_file_path):
+        """Read the map and configuration from files and populate the map."""
         with open(map_file_path) as map_file:
             self._blank_map = _TupleIndexedMatrix(list(row) for row in map_file.readlines())
         with open(level_config_file_path) as level_config_file:

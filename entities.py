@@ -26,6 +26,11 @@ class Entity:
         return self.health > 0
 
     def attack(self, target):
+        """Attempt an attack on a target.
+        
+        Whether or not the target is hit is calculated via modified
+        D&D rules. Very modified.
+        """
         if not self.alive:
             raise UnaliveException
 
@@ -39,10 +44,18 @@ class Entity:
         return success, roll, damage
 
     def move(self, movement_vector):
+        """Change the position of the current entity."""
         self.position = tuple(map(sum, zip(self.position,
                                            movement_vector)))
 
     def take_damage(self, damage):
+        """OUCH!
+        
+        Okay, hear me out, this is not a good docstring.
+        Don't take this as an example of what you should be doing.
+        However, I do like to make it fun for myself from time to time.
+        Deal with it.
+        """
         self.health -= damage
 
 
