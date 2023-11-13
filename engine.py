@@ -1,12 +1,13 @@
+import json
 from math import dist
 from pynput import keyboard
 
 import gui
 import entities
-
 from utils import CollisionError, NoOneToPlayError, VectorPosition
 
 
+LEVEL_CONFIG_FILE_PATH = "resources/level_config.json"
 MAP_FILE_PATH = "resources/map_2_v2"
 
 
@@ -22,7 +23,7 @@ class _TupleIndexedMatrix(list):
             self[index[0]][index[1]] = value
         else:
             self[index] = value
-    
+
     def deepcopy(self):
         return _TupleIndexedMatrix(row[:] for row in self)
 
@@ -31,33 +32,29 @@ class Map:
     """The map / field of the game."""
     WALLS = '=|#'
     EMPTY = ' '
-    CHARACTER_INIT_POSITION = (18, 6)
 
-    def __init__(self, map_file_path):
+    def __init__(self, map_file_path, level_config_file_path):
         with open(map_file_path) as map_file:
             self._blank_map = _TupleIndexedMatrix(list(row) for row in map_file.readlines())
-        try:
-            self.character = entities.Character('Petkan',
-                                                5,
-                                                100,
-                                                self.CHARACTER_INIT_POSITION,
-                                                '69')
-        except (AttributeError, NameError, TypeError):
-            raise NoOneToPlayError
+        with open(level_config_file_path) as level_config_file:
+            level_config = json.load(level_config_file)
+        # Since json doesn't support fancy objects trivially,
+        # create a VectorPosition from the coordinates in the level config
+        character_config = level_config['character']
+        character_config['position'] = VectorPosition(character_config['position'])
+        self.character = entities.Character(**character_config)
         self.enemies = []
-        self.enemies.append(entities.Enemy('Murshata',
-                                           10,
-                                           150,
-                                           (15, 15),
-                                           'Пират'))
+        for enemy in level_config['enemies']:
+            enemy['position'] = VectorPosition(enemy['position'])
+            self.enemies.append(entities.Enemy(**enemy))
         self.update()
 
     def __str__(self):
         return ''.join(''.join(row) for row in self._map)
-    
+
     def __getitem__(self, index):
         return self._map[index]
-    
+
     def update(self):
         """Reset the map to it's default state and redraw the moveable objects."""
         self._map = self._blank_map.deepcopy()
@@ -73,11 +70,11 @@ class Engine:
                         's': VectorPosition((1, 0)),
                         'a': VectorPosition((0, -1)),
                         'd': VectorPosition((0, 1))}
-    
+
     def __init__(self, enable_pynput):
         self.gui = gui.Gui()
         try:
-            self.map = Map(MAP_FILE_PATH)
+            self.map = Map(MAP_FILE_PATH, LEVEL_CONFIG_FILE_PATH)
         except NoOneToPlayError:
             self.gui.exit(gui.NO_ONE_TO_PLAY_MESSAGE)
         self._enable_pynput = enable_pynput
@@ -90,7 +87,7 @@ class Engine:
             self.gui.draw_screen(self.map)
             self.parse_input()
             self.map.update()
-    
+
     def handle_attack(self):
         """Trigger an attack of the player object."""
         target = min(self.map.enemies,
@@ -117,10 +114,10 @@ class Engine:
             raise CollisionError(gui.WALL_COLLISION_MESSAGE)
         if new_position in [enemy.position for enemy in self.map.enemies]:
             raise CollisionError(gui.ENEMY_COLLISION_MESSAGE)
-    
+
     def handle_exit(self):
         self.gui.exit()
-    
+
     def handle_movement(self, key_pressed):
         """Trigger a move of the player object depending on the chosen direction."""
         try:
@@ -133,7 +130,7 @@ class Engine:
                 self.map.character.move(self.MOVEMENT_VECTORS[key_pressed])
             except (AttributeError, NotImplementedError):
                 self.gui.add_message(gui.NO_MOVEMENT_MESSAGE)
-    
+
     def handle_spellcasting(self):
         """Trigger a move of the player object depending on the chosen direction."""
         # Handle missing implementation

@@ -40,15 +40,15 @@ NO_SPELLCASTING_MESSAGE = "Abracadabra. Nothing happens."
 class Gui:
     def __init__(self):
         self._message_buffer = ""
-    
+
     def add_attack_summary(self, success, **kwargs):
         """Add a summary of the attack to the message buffer.
-        
+
         The function expects at least (on success=False):
          - attacker
          - target
          - roll
-        
+
         And optionally (on success=True):
          - damage
          - health_left
@@ -77,7 +77,7 @@ class Gui:
             print(self._message_buffer, end="\n\n")
             self._message_buffer = ""
         print(MENU_TEXT)
-    
+
     def exit(self, message=EXIT_MESSAGE):
         print(message)
         sys.exit(0)

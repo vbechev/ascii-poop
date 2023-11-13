@@ -1,0 +1,32 @@
+{
+    "character": {
+        "name": "Petkan",
+        "level": 5,
+        "health": 100,
+        "position": [18, 6],
+        "fav_position": "69"
+    },
+    "enemies": [
+        {
+            "name": "Murshata",
+            "level": 3,
+            "health": 60,
+            "position": [15, 16],
+            "fav_position": "Leshoyad"
+        },
+        {
+            "name": "DRAKON",
+            "level": 15,
+            "health": 200,
+            "position": [6, 8],
+            "fav_position": "Pirat"
+        },
+        {
+            "name": "Petkan",
+            "level": 50,
+            "health": 10000,
+            "position": [11, 55],
+            "fav_position": "CDM"
+        }
+    ]
+}
