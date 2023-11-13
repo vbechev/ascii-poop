@@ -1,3 +1,4 @@
+from math import dist
 from pynput import keyboard
 
 import gui
@@ -36,9 +37,19 @@ class Map:
         with open(map_file_path) as map_file:
             self._blank_map = _TupleIndexedMatrix(list(row) for row in map_file.readlines())
         try:
-            self.character = entities.Character(self.CHARACTER_INIT_POSITION)
+            self.character = entities.Character('Petkan',
+                                                5,
+                                                100,
+                                                self.CHARACTER_INIT_POSITION,
+                                                '69')
         except (AttributeError, NameError, TypeError):
             raise NoOneToPlayError
+        self.enemies = []
+        self.enemies.append(entities.Enemy('Murshata',
+                                           10,
+                                           150,
+                                           (15, 15),
+                                           'Пират'))
         self.update()
 
     def __str__(self):
@@ -51,6 +62,8 @@ class Map:
         """Reset the map to it's default state and redraw the moveable objects."""
         self._map = self._blank_map.deepcopy()
         self._map[self.character.position] = self.character.ICON
+        for enemy in self.enemies:
+            self._map[enemy.position] = enemy.ICON
 
 
 class Engine:
@@ -80,11 +93,23 @@ class Engine:
     
     def handle_attack(self):
         """Trigger an attack of the player object."""
+        target = min(self.map.enemies,
+                     key = lambda enemy: dist(self.map.character.position,
+                                              enemy.position))
+        print(target)
         # Handle missing implementation
         try:
-            self.map.character.attack()
+            success, roll, damage = self.map.character.attack(target)
+            self.gui.add_attack_summary(success,
+                                        attacker=self.map.character.name,
+                                        target=target.name,
+                                        target_ac=target.ac,
+                                        health_left=target.health,
+                                        roll=roll,
+                                        damage=damage,
+                                        )
         except (AttributeError, NotImplementedError):
-            self.gui.message(gui.ATTACK_MESSAGE)
+            self.gui.add_message(gui.NO_ATTACK_MESSAGE)
 
     def handle_collision(self, movement_vector):
         """Raise a CollisionError when there are colliding objects."""
@@ -99,13 +124,13 @@ class Engine:
         try:
             self.handle_collision(self.MOVEMENT_VECTORS[key_pressed])
         except CollisionError:
-            self.gui.message(gui.COLLISION_MESSAGE)
+            self.gui.add_message(gui.COLLISION_MESSAGE)
         else:
             # Handle missing implementation
             try:
                 self.map.character.move(self.MOVEMENT_VECTORS[key_pressed])
             except (AttributeError, NotImplementedError):
-                self.gui.message(gui.MOVE_MESSAGE)
+                self.gui.add_message(gui.NO_MOVEMENT_MESSAGE)
     
     def handle_spellcasting(self):
         """Trigger a move of the player object depending on the chosen direction."""
@@ -113,7 +138,7 @@ class Engine:
         try:
             self.map.character.cast_spell()
         except (AttributeError, NotImplementedError):
-            self.gui.message(gui.SPELLCASTING_MESSAGE)
+            self.gui.add_message(gui.NO_SPELLCASTING_MESSAGE)
 
     def parse_input(self):
         """Parse the keyboard input with either pynput (dynamic) or from standard input."""
