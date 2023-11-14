@@ -14,7 +14,7 @@ MAP_FILE_PATH = "resources/map_2_v2"
 
 class _TupleIndexedMatrix(list):
     """A 2-dimensional matrix which allows indexing by tuples (position).
-    
+
     Example usage:
     >>> map = _TupleIndexedMatrix([[1, 2], [3, 4]])
     >>> print(map[(1, 1)])
@@ -187,7 +187,7 @@ class Engine:
                                     health_left=target.health,
                                     roll=roll,
                                     damage=damage)
-        
+
 
 engine = Engine(enable_pynput=True)
 engine.mainloop()

@@ -28,7 +28,7 @@ class Entity:
 
     def attack(self, target):
         """Attempt an attack on a target.
-        
+
         Whether or not the target is hit is calculated via modified
         D&D rules. Very modified.
         """
@@ -54,7 +54,7 @@ class Entity:
 
     def take_damage(self, damage):
         """OUCH!
-        
+
         Okay, hear me out, this is not a good docstring.
         Don't take this as an example of what you should be doing.
         However, I do like to make it fun for myself from time to time.
