@@ -4,7 +4,7 @@ from pynput import keyboard
 
 import gui
 import entities
-from utils import CollisionError, NoOneToPlayError, VectorPosition
+from utils import CollisionError, NoOneToPlayError, UnaliveException, VectorPosition
 
 
 LEVEL_CONFIG_FILE_PATH = "resources/level_config.json"
@@ -107,9 +107,13 @@ class Engine:
                                         )
         except (AttributeError, NotImplementedError):
             self.gui.add_message(gui.NO_ATTACK_MESSAGE)
+        except UnaliveException:
+            self.gui.add_message(gui.NO_LIFE_MESSAGE)
 
     def handle_collision(self, movement_vector):
         """Raise a CollisionError when there are colliding objects."""
+        if not self.map.character.alive:
+            return # Yes, skip collision if the character is a ghost
         new_position = movement_vector + self.map.character.position
         if self.map[new_position] in self.map.WALLS:
             raise CollisionError(gui.WALL_COLLISION_MESSAGE)

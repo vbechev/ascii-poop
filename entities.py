@@ -11,7 +11,6 @@ class Entity:
     BASE_HIT_DIE = 8 # 1d8
     BASE_AC = 10
 
-    # TODO - More state - dead/alive, etc., spells, some stuff for testing
     def __init__(self, name, level, health, position, fav_position):
         self.name = name
         self._level = level
