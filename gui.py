@@ -5,12 +5,12 @@ import sys
 # Attack summary messages
 # Attack messaging can be better done in another way, but this will have to do
 ATTACK_COMMON = "{attacker} attempted to hit {target} with a roll of {roll}.\n"
-ATTACK_FAILURE = ATTACK_COMMON + "The attack does not hit {target}."
+ATTACK_FAILURE = ATTACK_COMMON + "The attack does not hit {target}.\n"
 ATTACK_FAILURE_TYPE_ERROR = ("Expected 'attacker', 'target', 'roll', "
                              "'health_left' and 'damage' in **kwargs.")
 ATTACK_SUCCESS = (ATTACK_COMMON +
                   "The attack hits and deals {damage} damage.\n"
-                  "{target} has {health_left} health remaining.")
+                  "{target} has {health_left} health remaining.\n")
 ATTACK_SUCCESS_TYPE_ERROR = ("Expected 'attacker', 'target', "
                              "and 'roll' in **kwargs.")
 

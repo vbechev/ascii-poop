@@ -60,6 +60,7 @@ class Map:
         """Reset the map to it's default state and redraw the moveable objects."""
         self._map = self._blank_map.deepcopy()
         self._map[self.character.position] = self.character.ICON
+        self.enemies = [enemy for enemy in self.enemies if enemy.alive]
         for enemy in self.enemies:
             self._map[enemy.position] = enemy.ICON
 
@@ -96,15 +97,10 @@ class Engine:
                                               enemy.position))
         # Handle missing implementation
         try:
-            success, roll, damage = self.map.character.attack(target)
-            self.gui.add_attack_summary(success,
-                                        attacker=self.map.character.name,
-                                        target=target.name,
-                                        target_ac=target.ac,
-                                        health_left=target.health,
-                                        roll=roll,
-                                        damage=damage,
-                                        )
+            self.perform_attack(self.map.character, target)
+            # Target retaliates
+            if target.alive:
+                self.perform_attack(target, self.map.character)
         except (AttributeError, NotImplementedError):
             self.gui.add_message(gui.NO_ATTACK_MESSAGE)
         except UnaliveException:
@@ -171,6 +167,17 @@ class Engine:
             listener.join()
         return key_pressed.char
 
+    def perform_attack(self, attacker, target):
+        """Perform the attack action and log the attack to the output buffer."""
+        success, roll, damage = attacker.attack(target)
+        self.gui.add_attack_summary(success,
+                                    attacker=attacker.name,
+                                    target=target.name,
+                                    target_ac=target.ac,
+                                    health_left=target.health,
+                                    roll=roll,
+                                    damage=damage)
+        
 
 engine = Engine(enable_pynput=True)
 engine.mainloop()
