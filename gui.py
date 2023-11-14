@@ -32,7 +32,9 @@ MENU_TEXT = """Controls:
 What do you want to do:
 """
 NO_ATTACK_MESSAGE = "WHY CHOOSE VIOLENCE?!?"
-NO_LIFE_MESSAGE = ("You're dead, so you can't attack!"
+NO_ENEMIES_IN_RANGE = ("You swing with the fury and range of a T-rex... "
+                       "And there seems to be no one in that range.")
+NO_LIFE_MESSAGE = ("You're dead, so you can't attack! "
                    "Well at least now you can try to move through walls...")
 NO_MOVEMENT_MESSAGE = "Oh no, it seems you haven't learned how to move!"
 NO_ONE_TO_PLAY_MESSAGE = "Well you don't have a character yet, do you?!"

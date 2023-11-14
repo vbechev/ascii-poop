@@ -4,7 +4,8 @@ from pynput import keyboard
 
 import gui
 import entities
-from utils import CollisionError, NoOneToPlayError, UnaliveException, VectorPosition
+from utils import (CollisionError, NoOneToPlayError, OutOfRangeError,
+                   UnaliveException, VectorPosition)
 
 
 LEVEL_CONFIG_FILE_PATH = "resources/level_config.json"
@@ -12,6 +13,13 @@ MAP_FILE_PATH = "resources/map_2_v2"
 
 
 class _TupleIndexedMatrix(list):
+    """A 2-dimensional matrix which allows indexing by tuples (position).
+    
+    Example usage:
+    >>> map = _TupleIndexedMatrix([[1, 2], [3, 4]])
+    >>> print(map[(1, 1)])
+    4
+    """
     def __getitem__(self, index):
         if isinstance(index, tuple):
             return super().__getitem__(index[0])[index[1]]
@@ -105,6 +113,8 @@ class Engine:
             self.gui.add_message(gui.NO_ATTACK_MESSAGE)
         except UnaliveException:
             self.gui.add_message(gui.NO_LIFE_MESSAGE)
+        except OutOfRangeError:
+            self.gui.add_message(gui.NO_ENEMIES_IN_RANGE)
 
     def handle_collision(self, movement_vector):
         """Raise a CollisionError when there are colliding objects."""

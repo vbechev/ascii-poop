@@ -1,6 +1,7 @@
+from math import dist
 from random import randint
 
-from utils import UnaliveException
+from utils import OutOfRangeError, UnaliveException
 
 
 D20 = 20
@@ -8,6 +9,7 @@ D20 = 20
 
 class Entity:
 
+    ATTACK_RANGE = 5
     BASE_HIT_DIE = 8 # 1d8
     BASE_AC = 10
 
@@ -32,6 +34,9 @@ class Entity:
         """
         if not self.alive:
             raise UnaliveException
+
+        if dist(self.position, target.position) > self.ATTACK_RANGE:
+            raise OutOfRangeError
 
         roll = randint(1, D20) + self._level
         if success := roll >= target.ac:

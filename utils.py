@@ -6,6 +6,10 @@ class NoOneToPlayError(Exception):
     pass
 
 
+class OutOfRangeError(Exception):
+    pass
+
+
 # Why is the following an "Exception" while the rest are "Error"-s?
 # The mysteries of life...
 class UnaliveException(Exception):
